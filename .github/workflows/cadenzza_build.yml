@@ -9,46 +9,42 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    # ១. រៀបចំប្រព័ន្ធ Python សម្រាប់ដំណើរការស្គ្រីប Extract ឯកសារ (.unity3d / .bnk) បើចាំបាច់
-    - name: Set up Python Environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    - name: Install Asset Processing Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install UnityPy Pillow
+      - name: Set up Python Environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    # ២. កំណត់រចនាសម្ព័ន្ធ Xcode សម្រាប់ SwiftUI Project របស់ CADENZZA
-    - name: Set up Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: '15.0'
+      - name: Install Asset Processing Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install UnityPy Pillow
 
-    # ៣. ដំណើរការ Compile និង Archive គម្រោង CADENZZA
-    - name: Build CADENZZA Archive
-      run: |
-        echo "[*] កំពុងសាងសង់ CADENZZA Auto Convert App..."
-        xcodebuild -project CADENZZA.xcodeproj \
-                   -scheme CADENZZA \
-                   -sdk iphoneos \
-                   -configuration Release \
-                   archive -archivePath build/CADENZZA.xcarchive
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.0'
 
-    # ៤. វេចខ្ចប់ចេញជាឯកសារ CADENZZA.ipa ត្រៀមយកទៅប្រើប្រាស់
-    - name: Export CADENZZA.ipa
-      run: |
-        xcodebuild -exportArchive \
-                   -archivePath build/CADENZZA.xcarchive \
-                   -exportPath build/output \
-                   -exportOptionsPlist ExportOptions.plist
+      - name: Build CADENZZA Archive
+        run: |
+          echo "[*] កំពុងសាងសង់ CADENZZA Auto Convert App..."
+          xcodebuild -project CADENZZA.xcodeproj \
+                     -scheme CADENZZA \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     archive -archivePath build/CADENZZA.xcarchive
 
-    # ៥. រក្សាទុកឯកសារ CADENZZA.ipa ជា Artifact សម្រាប់ Download
-    - name: Upload CADENZZA IPA Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: CADENZZA-ipa
-        path: build/output/*.ipa
+      - name: Export CADENZZA.ipa
+        run: |
+          xcodebuild -exportArchive \
+                     -archivePath build/CADENZZA.xcarchive \
+                     -exportPath build/output \
+                     -exportOptionsPlist ExportOptions.plist
+
+      - name: Upload CADENZZA IPA Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: CADENZZA-ipa
+          path: build/output/*.ipa
