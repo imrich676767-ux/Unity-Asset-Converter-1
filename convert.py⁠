@@ -1,0 +1,22 @@
+import os
+import UnityPy
+
+input_file = "Hero_Skin.unity3d" # ឯកសារដែលត្រូវ Upload ចូលទីនេះ
+output_folder = "Extracted_iOS"
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+print("[*] កំពុងអានឯកសារ Unity លើ GitHub Actions...")
+env = UnityPy.load(input_file)
+
+count = 0
+for obj in env.objects:
+    if obj.type.name == "Texture2D":
+        data = obj.read()
+        img = data.image
+        img_path = os.path.join(output_folder, f"{data.name}.png")
+        img.save(img_path)
+        count += 1
+
+print(f"[✔] Extract បានជោគជ័យ! សរុប: {count} រូបភាព")
